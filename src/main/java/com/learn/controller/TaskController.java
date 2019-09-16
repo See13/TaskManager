@@ -21,34 +21,37 @@ import com.learn.model.Task;
 import com.learn.repository.ParentTaskRepository;
 import com.learn.repository.TaskRepository;
 
-@RestController @CrossOrigin(origins = "http://localhost:4200")
+@RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/v1")
 public class TaskController {
 	private static final Logger logger = LogManager.getLogger(TaskController.class);
 	@Autowired
-    private TaskRepository taskRepository;
+	private TaskRepository taskRepository;
 	@Autowired
-    private ParentTaskRepository parentTaskRepository;
-	
+	private ParentTaskRepository parentTaskRepository;
+
 	@PostMapping("/parentTask")
-	public ParentTask createParentTask(ParentTask parentTask ){
+	public ParentTask createParentTask(ParentTask parentTask) {
 		logger.info("Enter into createParentTaskmethod in controller.......");
 		return parentTaskRepository.save(parentTask);
 	}
+
 	@GetMapping("/parentlist")
-	public List<ParentTask> getParentTasks(){
+	public List<ParentTask> getParentTasks() {
 		logger.info("Enter into getParentTasks method in controller.......");
 		return parentTaskRepository.findAll();
-		
 	}
+
 	@GetMapping("/findByParentTaskId/{parenttaskid}")
-	public Optional<ParentTask> getParentTask(@PathVariable long parenttaskid){
+	public Optional<ParentTask> getParentTask(@PathVariable long parenttaskid) {
 		logger.info("Enter into getParentTask method in controller.......");
 		return parentTaskRepository.findById(parenttaskid);
-		
+
 	}
+
 	@PostMapping("/addtask")
-	public Task createTask(@RequestBody Task task ){
+	public Task createTask(@RequestBody Task task) {
 		logger.info("Enter into createTask method in controller.......");
 		task.setIsTaskEnded("false");
 		ParentTask newParentTask = new ParentTask();
@@ -57,8 +60,9 @@ public class TaskController {
 		parentTaskRepository.save(newParentTask);
 		return taskRepository.save(task);
 	}
+
 	@PostMapping("/parenttask/{parenttaskid}/addtask")
-	public Task createTaskInProject(@PathVariable long parenttaskid, @RequestBody Task task ){
+	public Task createTaskInProject(@PathVariable long parenttaskid, @RequestBody Task task) {
 		logger.info("Enter into createTask method in controller.......");
 		task.setIsTaskEnded("false");
 		ParentTask newParentTask = new ParentTask();
@@ -67,40 +71,44 @@ public class TaskController {
 		parentTaskRepository.save(newParentTask);
 		try {
 			return parentTaskRepository.findById(parenttaskid).map(parentTask -> {
-					task.setParentTask(parentTask);
-			    return taskRepository.save(task);
+				task.setParentTask(parentTask);
+				return taskRepository.save(task);
 			}).orElseThrow(() -> new Exception("parenttaskid " + parenttaskid + " not found"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		return taskRepository.save(task);
+		}
+		return taskRepository.save(task);
 	}
+
 	@GetMapping("/list")
-	public List<Task> getTasks(){
+	public List<Task> getTasks() {
 		logger.info("Enter into getTasks method in controller.......");
 		return taskRepository.findAll();
-		
 	}
+
 	@GetMapping("/findById/{taskid}")
-	public Optional<Task> getTask(@PathVariable long taskid){
+	public Optional<Task> getTask(@PathVariable long taskid) {
 		logger.info("Enter into getTask method in controller.......");
 		return taskRepository.findById(taskid);
-		
 	}
+
 	@DeleteMapping("/deleteById/{taskid}")
-	public long deleteTask(@PathVariable  long taskid){
+	public long deleteTask(@PathVariable long taskid) {
 		logger.info("Enter into deleteTask method in controller.......");
-		 taskRepository.deleteById(taskid);
-		return taskid;		
+		taskRepository.deleteById(taskid);
+		return taskid;
 	}
+
 	@PutMapping("/updateById/{taskid}")
-	public Task updateTask(@RequestBody Task task){
+	public Task updateTask(@RequestBody Task task) {
 		logger.info("Enter into updateTask method in controller.......");
 		return taskRepository.save(task);
 	}
+
 	@PutMapping("/IsTaskEnded/{taskid}")
-	public Task TaskEnded(@RequestBody Task task){
-		logger.info("Enter into TaskEnded method in controller......."+task.getIsTaskEnded());
+	public Task TaskEnded(@RequestBody Task task) {
+		logger.info("Enter into TaskEnded method in controller......." + task.getIsTaskEnded());
 		task.setIsTaskEnded("True");
 		return taskRepository.save(task);
 	}
